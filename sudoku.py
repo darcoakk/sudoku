@@ -71,8 +71,8 @@ def getPossibleValuesForZone(sudoku,r,c):
     start_col = getSqIndex(c)
     finals = set()
     crow = start_row
-    ccol = start_col
     for row in sudoku[start_row:start_row+3]:
+        ccol = start_col
         for cell in row[start_col:start_col+3]:
             if crow != r or ccol != c:
                 finals.update(cell)
@@ -88,22 +88,9 @@ def solve(sudoku):
     better = True
     iteration = 0
     while better:
-        rowIndex = 0
         iteration += 1
         print(iteration)
-        better = False
-        for row in sudoku:
-            colIndex = 0
-            for cell in row:
-                if(len(cell) > 1):
-                    initialSize = len(sudoku[rowIndex][colIndex])
-                    sudoku[rowIndex][colIndex] = getPossibleValuesForCell(sudoku,rowIndex,colIndex)
-                    newSize = len(sudoku[rowIndex][colIndex])
-                    if newSize < initialSize:
-                        better = True
-                colIndex += 1
-            rowIndex += 1
-        printSudoku(sudoku)
+        better = runConstraints(sudoku)
         rowIndex = 0
         for row in sudoku:
             colIndex = 0
@@ -120,6 +107,21 @@ def solve(sudoku):
 
     print(sudoku)
 
+def runConstraints(sudoku):
+    better = False
+    rowIndex = 0
+    for row in sudoku:
+        colIndex = 0
+        for cell in row:
+            if(len(cell) > 1):
+                initialSize = len(sudoku[rowIndex][colIndex])
+                sudoku[rowIndex][colIndex] = getPossibleValuesForCell(sudoku,rowIndex,colIndex)
+                newSize = len(sudoku[rowIndex][colIndex])
+                if newSize < initialSize:
+                    better = True
+            colIndex += 1
+        rowIndex += 1
+    return better
     
 puzzle = parseSudokuFile("puzzle2.sudoku")
 solve(puzzle)
